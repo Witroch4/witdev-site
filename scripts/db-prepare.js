@@ -108,9 +108,9 @@ async function runSchemas() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         last_login TIMESTAMPTZ
       );
-      
-      console.log('✅ Estrutura de tabelas e schema analítico (analytics) inicializada e garantida!');
     `);
+
+        console.log('✅ Estrutura de tabelas e schema analítico (analytics) inicializada e garantida!');
 
         client.release();
     } catch (err) {
