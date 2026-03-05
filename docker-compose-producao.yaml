@@ -16,6 +16,7 @@ version: "3.8"
 services:
   witdev_site:
     image: witrocha/witdev-site:latest
+    command: sh -c "node /app/scripts/db-prepare.js && node server.js"
     networks:
       - minha_rede
     environment:
