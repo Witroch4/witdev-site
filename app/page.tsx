@@ -81,11 +81,18 @@ export default function Home() {
               Wit<span className="text-secondary">Dev</span>
             </span>
           </div>
-          <a href="mailto:suporte@witdev.com.br">
-            <Button variant="outline" className="border-border hover:bg-white/5 transition-colors">
-              Contato
-            </Button>
-          </a>
+          <div className="flex items-center justify-end gap-3">
+            <a href="/admin">
+              <Button variant="ghost" size="sm" className="hidden sm:flex text-muted-foreground hover:text-foreground">
+                Painel
+              </Button>
+            </a>
+            <a href="mailto:suporte@witdev.com.br">
+              <Button variant="outline" className="border-border hover:bg-white/5 transition-colors">
+                Contato
+              </Button>
+            </a>
+          </div>
         </header>
 
         {/* Hero Section */}
