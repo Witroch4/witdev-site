@@ -1,18 +1,13 @@
 # docker-compose-producao.yaml
 # ================================================
 # Compose de PRODUÇÃO — Deploy via Portainer (Docker Swarm)
-# Segue o padrão WitDev com Traefik + minha_rede
+# Segue o padrão WitDev com Traefik + minha_rede usando postgres externo
 # ================================================
 #
 # Para deployar via Portainer:
 #   1. Abrir Portainer > Stacks > Add Stack
 #   2. Colar o conteúdo deste arquivo
 #   3. Confirmar deploy
-#
-# Pré-requisitos no Swarm:
-#   - Rede externa "minha_rede" criada:
-#     docker network create --driver overlay minha_rede
-#   - Traefik rodando com entrypoints websecure e certresolver "letsencryptresolver"
 #
 # ================================================
 
@@ -21,6 +16,7 @@ version: "3.8"
 services:
   witdev_site:
     image: witrocha/witdev-site:latest
+    command: sh -c "node /app/scripts/db-prepare.js && node server.js"
     networks:
       - minha_rede
     environment:
@@ -28,7 +24,7 @@ services:
       NEXT_TELEMETRY_DISABLED: "1"
       PORT: "3000"
       HOSTNAME: "0.0.0.0"
-      DATABASE_URL: "postgresql://witdev_analytics:witdev_analytics_2026@witdev_postgres:5432/witdev_analytics"
+      DATABASE_URL: "postgresql://postgres:WiT4mNqk8Twjhita8s87d7djhqsrhjlomorrahakkerfdpyD6PuAoI1yHbKztalo@49.13.155.94:5432/witdev_analytics?tcp_keepalive=1&tcp_keepalive_idle=120&tcp_keepalive_interval=10&connection_limit=5&pool_timeout=30"
       JWT_SECRET: "z7L9*mP2qX5%vR4!wT8$kH3@jN6&cK1^yA"
     deploy:
       mode: replicated
@@ -83,36 +79,9 @@ services:
         max-file: "3"
 
 # ------------------------------------------------
-# Infraestrutura — Banco de Dados Analytics
-# ------------------------------------------------
-  witdev_postgres:
-    image: postgres:15-alpine
-    networks:
-      - minha_rede
-    environment:
-      POSTGRES_USER: witdev_analytics
-      POSTGRES_PASSWORD: witdev_analytics_2026
-      POSTGRES_DB: witdev_analytics
-    volumes:
-      - witdev_pg_data:/var/lib/postgresql/data
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512M
-
-# ------------------------------------------------
 # Infraestrutura — Rede externa compartilhada
 # ------------------------------------------------
 networks:
   minha_rede:
     external: true
     name: minha_rede
-
-volumes:
-  witdev_pg_data:
