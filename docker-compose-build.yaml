@@ -1,0 +1,27 @@
+# docker-compose-build.yaml
+# ================================================
+# Compose para fazer o BUILD local e push da imagem
+# Não usar em produção — este é o compose de CI/Build
+# ================================================
+#
+# Como usar:
+#   docker compose -f docker-compose-build.yaml build
+#   docker compose -f docker-compose-build.yaml push
+#
+# Pré-requisitos:
+#   docker login
+#
+# ================================================
+
+version: "3.8"
+
+services:
+  witdev_site_builder:
+    image: witrocha/witdev-site:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      # Cache de camadas para builds mais rápidos
+      cache_from:
+        - witrocha/witdev-site:latest
+    # Não há porta exposta aqui — só buildar e fazer push

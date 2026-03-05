@@ -1,0 +1,59 @@
+# Dockerfile.prod - WitDev Site
+# ===============================
+# Etapa 1: Build da aplicação Next.js
+# ===============================
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# Dependências de sistema para build
+RUN apk update && apk add --no-cache \
+    libc6-compat \
+    && rm -rf /var/cache/apk/*
+
+# Instalar dependências JS primeiro (cache layer)
+COPY package.json package-lock.json* ./
+RUN npm ci --frozen-lockfile
+
+# Código-fonte
+COPY . .
+
+# Próxima.js: desabilitar telemetria
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Build da aplicação Next.js
+RUN npm run build
+
+# Remover dev dependencies para imagem menor
+RUN npm prune --production --ignore-scripts && \
+    rm -rf node_modules/.cache && \
+    rm -rf /tmp/*
+
+# ===============================
+# Etapa 2: Runtime (produção)
+# ===============================
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Usuário não-privilegiado para segurança
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Artefatos críticos do Next.js
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

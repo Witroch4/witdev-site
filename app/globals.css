@@ -1,26 +1,169 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* PASSO 1: Variáveis CSS no root */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: hsl(0 0% 4%);
+  --foreground: hsl(0 0% 98%);
+
+  --card: hsl(0 0% 6%);
+  --card-foreground: hsl(0 0% 98%);
+
+  --popover: hsl(0 0% 6%);
+  --popover-foreground: hsl(0 0% 98%);
+
+  --primary: hsl(190 95% 40%);
+  /* Electric Cyan */
+  --primary-foreground: hsl(0 0% 100%);
+
+  --secondary: hsl(258 90% 66%);
+  /* Deep Violet */
+  --secondary-foreground: hsl(0 0% 100%);
+
+  --muted: hsl(0 0% 15%);
+  --muted-foreground: hsl(0 0% 65%);
+
+  --accent: hsl(0 0% 15%);
+  --accent-foreground: hsl(0 0% 98%);
+
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --border: hsl(0 0% 14%);
+  /* Ember border */
+  --input: hsl(0 0% 14%);
+  --ring: hsl(190 95% 40%);
+
+  --radius: 0.75rem;
+
+  --success: hsl(160 84% 39%);
+  --success-foreground: hsl(0 0% 100%);
 }
 
+/* Opcional: versão light (embora o design exija night-mode constante, manter compatibilidade v4) */
+.light {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(0 0% 4%);
+
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(0 0% 4%);
+
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(0 0% 4%);
+
+  --primary: hsl(190 95% 40%);
+  --primary-foreground: hsl(0 0% 100%);
+
+  --secondary: hsl(258 90% 66%);
+  --secondary-foreground: hsl(0 0% 100%);
+
+  --muted: hsl(0 0% 96%);
+  --muted-foreground: hsl(0 0% 45%);
+
+  --accent: hsl(0 0% 96%);
+  --accent-foreground: hsl(0 0% 4%);
+
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --border: hsl(0 0% 90%);
+  --input: hsl(0 0% 90%);
+  --ring: hsl(190 95% 40%);
+
+  --success: hsl(160 84% 39%);
+  --success-foreground: hsl(0 0% 100%);
+}
+
+/* PASSO 2: Mapear variáveis para utilities do Tailwind */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-up: fade-up 0.5s ease-out;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* PASSO 3: Estilos base */
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: var(--ring);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased selection:bg-primary/20 selection:text-primary;
+  }
 }
