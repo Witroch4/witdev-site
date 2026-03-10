@@ -5,19 +5,36 @@
 version: "3.8"
 
 services:
+  witdev_postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: witdev_analytics
+      POSTGRES_PASSWORD: witdev_analytics_2026
+      POSTGRES_DB: witdev_analytics
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U witdev_analytics -d witdev_analytics"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   app:
     image: node:20-alpine
     working_dir: /app
     volumes:
       - .:/app
       - node_modules:/app/node_modules
-      - next_cache:/app/.next
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://witdev_analytics:witdev_analytics_2026@witdev_postgres:5432/witdev_analytics
+    depends_on:
+      witdev_postgres:
+        condition: service_healthy
     command: sh -c "npm install && npm run dev"
 
 volumes:
   node_modules:
-  next_cache:
+  postgres_data:

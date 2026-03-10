@@ -106,6 +106,12 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  --font-syne: var(--font-syne, "Syne", sans-serif);
+  --font-dm-sans: var(--font-dm-sans, "DM Sans", sans-serif);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-syne);
+
+  --animate-marquee: marquee 28s linear infinite;
   --animate-fade-in: fade-in 0.3s ease-out;
   --animate-fade-up: fade-up 0.5s ease-out;
   --animate-accordion-down: accordion-down 0.2s ease-out;
@@ -151,6 +157,16 @@
     to {
       height: 0;
     }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0) }
+    to   { transform: translateX(-50%) }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) }
+    50% { transform: translateY(-12px) }
   }
 }
 

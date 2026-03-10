@@ -136,10 +136,19 @@ cmd_build() {
 
   ensure_env_file
 
-  log_info "Rebuildando imagens..."
-  dc build
+  log_info "Parando containers..."
+  dc down
 
-  log_info "Subindo o container..."
+  # Descobre o prefixo do projeto (nome do diretório por padrão)
+  local project
+  project="$(basename "$SCRIPT_DIR" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9_-]//g')"
+
+  log_info "Removendo volume node_modules..."
+  docker volume rm "${project}_node_modules" 2>/dev/null \
+    && log_success "Volume node_modules removido." \
+    || log_warn "Volume node_modules não encontrado (ok)."
+
+  log_info "Subindo containers (npm install será executado)..."
   dc up -d
 
   log_success "Build finalizado! ⚡"
